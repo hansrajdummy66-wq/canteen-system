@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kitchen Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .staff-table { width: 100%; border-collapse: collapse; background: white; margin-top: 20px; border-radius: 10px; overflow: hidden; }
+        .staff-table th { background: #333; color: white; padding: 15px; text-align: left; }
+        .staff-table td { padding: 15px; border-bottom: 1px solid #eee; }
+        .order-id { background: #ffeaa7; padding: 4px 8px; border-radius: 4px; font-weight: bold; color: #d63031; }
+        .total-price { font-weight: bold; color: #2ecc71; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header style="text-align: center; margin-bottom: 30px;">
+            <h1>👨‍🍳 Kitchen Dashboard</h1>
+            <p>Live Pre-Orders</p>
+        </header>
+
+        <table class="staff-table">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Order ID</th>
+                    <th>Student</th>
+                    <th>Class</th>
+                    <th>Items</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>{{ order.created_at.strftime('%I:%M %p') }}</td>
+                    <td><span class="order-id">{{ order.order_ref }}</span></td>
+                    <td>{{ order.student_name }}</td>
+                    <td>{{ order.student_class }}</td>
+                    <td>{{ order.items }}</td>
+                    <td class="total-price">₹{{ order.total_price }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="/" style="text-decoration: none; color: #666;">← Back to Student Menu</a>
+        </div>
+    </div>
+</body>
+</html>
