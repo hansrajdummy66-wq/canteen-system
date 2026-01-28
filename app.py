@@ -154,3 +154,15 @@ if __name__ == '__main__':
     # Use PORT env variable for Render
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
+    @app.route('/staff')
+def staff_dashboard():
+    # This checks for the secret key in the URL
+    key = request.args.get('key')
+    if key != STAFF_API_KEY:
+        return "Unauthorized: Please provide the correct ?key= in the URL", 401
+    
+    # This grabs all orders from the database, newest first
+    orders = Order.query.order_by(Order.created_at.desc()).all()
+    
+    # This sends orders to the new page we are about to create
+    return render_template('staff_dashboard.html', orders=orders)
