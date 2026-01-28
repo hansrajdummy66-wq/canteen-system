@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Success!</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container" style="text-align: center; margin-top: 50px;">
+        <div style="background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+            <h1 style="color: #2ecc71;">Order Placed! ✅</h1>
+            <p>Order Reference: <strong>{{ order.order_ref }}</strong></p>
+            <p>Items: {{ order.items }}</p>
+            <h2>Total: ₹{{ order.total_price }}</h2>
+            <p>Show this screen at the canteen counter.</p>
+            <a href="/">Back to Menu</a>
+        </div>
+    </div>
+</body>
+</html>

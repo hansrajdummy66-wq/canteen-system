@@ -1,0 +1,47 @@
+body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; margin: 0; padding: 20px; }
+.container { max-width: 900px; margin: auto; }
+h1 { text-align: center; color: #333; }
+
+/* The Grid for Food Cards */
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+/* Card Style */
+.food-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* SMOOTH ANIMATION */
+    cursor: pointer;
+    position: relative;
+}
+
+/* HOVER EFFECT: Card Grows */
+.food-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.food-card img {
+    width: 100%; height: 150px; object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+/* HOVER EFFECT: Image Zooms */
+.food-card:hover img { transform: scale(1.1); }
+
+.info { padding: 15px; text-align: center; }
+.price { color: #2ecc71; font-weight: bold; }
+
+/* Hide the checkbox but make it work when card is clicked */
+.hidden-check { display: none; }
+.hidden-check:checked + .food-card { border: 3px solid #2ecc71; }
+
+.form-inputs { display: flex; gap: 10px; margin-bottom: 20px; justify-content: center; }
+input, select { padding: 10px; border-radius: 5px; border: 1px solid #ddd; }
+.btn { display: block; width: 200px; margin: 30px auto; padding: 15px; background: #333; color: white; border: none; border-radius: 50px; cursor: pointer; }

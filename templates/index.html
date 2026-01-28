@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Canteen Pre-Order</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🏫 School Canteen</h1>
+        <form method="POST">
+            <div class="form-inputs">
+                <input type="text" name="student_name" placeholder="Your Name" required>
+                <select name="class_section" required>
+                    <option value="">Select Class</option>
+                    <option value="10-A">10-A</option>
+                    <option value="10-B">10-B</option>
+                    <option value="11-A">11-A</option>
+                    <option value="11-B">11-B</option>
+                </select>
+            </div>
+
+            <div class="menu-grid">
+                {% for item in menu %}
+                <label>
+                    <input type="checkbox" name="items" value="{{ item.id }}" class="hidden-check">
+                    <div class="food-card">
+                        <img src="{{ item.image }}">
+                        <div class="info">
+                            <h3>{{ item.name }}</h3>
+                            <p class="price">₹{{ item.price }}</p>
+                        </div>
+                    </div>
+                </label>
+                {% endfor %}
+            </div>
+            <button type="submit" class="btn">Place Order</button>
+        </form>
+    </div>
+</body>
+</html>
