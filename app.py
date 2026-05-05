@@ -14,20 +14,20 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:/
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'canteen-secret-key')
 
-# Set your confirmed key here
+# Your confirmed staff key
 STAFF_API_KEY = os.environ.get('STAFF_KEY', 'canteen123')
 
 db = SQLAlchemy(app)
 
 # ==========================================
-# 2. CONTINENTAL VEG MENU DATA
+# 2. UPDATED MENU DATA
 # ==========================================
 MENU = [
     # --- Main Items ---
     {"id": "1", "name": "Veg Noodles", "price": 50, "image": "https://images.unsplash.com/photo-1585032226651-759b368d7246?w=500"},
     {"id": "2", "name": "Veg Fried Rice", "price": 50, "image": "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=500"},
     {"id": "3", "name": "White Sauce Pasta", "price": 60, "image": "https://images.unsplash.com/photo-1645112481338-3564e161043e?w=500"},
-    {"id": "4", "name": "Red Sauce Pasta", "price": 60, "image": "https://images.unsplash.com/photo-1551183053-bf91b1dca103?w=500"},
+    {"id": "4", "name": "Red Sauce Pasta", "price": 60, "image": "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=500"}, # Fixed Image
     {"id": "5", "name": "Veg Mac & Cheese", "price": 70, "image": "https://images.unsplash.com/photo-1543339308-43e59d6b73a6?w=500"},
     
     # --- Quick Bites ---
@@ -35,7 +35,7 @@ MENU = [
     {"id": "7", "name": "Grilled Veg Sandwich", "price": 40, "image": "https://images.unsplash.com/photo-1528736235302-52922df5c122?w=500"},
     {"id": "8", "name": "Veg Burger", "price": 50, "image": "https://images.unsplash.com/photo-1550547660-d9450f859349?w=500"},
     {"id": "9", "name": "Cheese Burger (Veg)", "price": 60, "image": "https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=500"},
-    {"id": "10", "name": "Garlic Bread", "price": 30, "image": "https://images.unsplash.com/photo-1573140247632-f8fd74997d5c?w=500"},
+    {"id": "10", "name": "Garlic Bread", "price": 30, "image": "https://images.unsplash.com/photo-1619535814932-7989fa2c9daf?w=500"}, # Fixed Image
     
     # --- Sides ---
     {"id": "11", "name": "French Fries (Small)", "price": 40, "image": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=500"},
