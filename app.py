@@ -38,7 +38,7 @@ MENU = [
     {"id": "16", "name": "Iced Tea", "price": 30, "image": "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=500"}
 ]
 
-# Database Model (Updated with PIN, Status, and Payment)
+# Database Model 
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     order_ref = db.Column(db.String(10), unique=True)
@@ -55,14 +55,10 @@ class Order(db.Model):
 with app.app_context():
     db.create_all()
 
-# Time Checker Function
+# Time Checker Function (SET TO 'TRUE' FOR ALL-DAY TESTING)
 def is_ordering_open():
-    now_ist = datetime.now(IST)
-    if now_ist.hour < 7:
-        return True
-    elif now_ist.hour == 7 and now_ist.minute < 45:
-        return True
-    return False
+    # To turn the 7:45 AM lock back on later, we will replace this single line!
+    return True
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -118,7 +114,6 @@ def staff_dashboard():
     
     return render_template('staff_dashboard.html', orders=orders, total=total_orders, pending=pending_orders)
 
-# NEW: Route to mark an order as completed
 @app.route('/complete/<int:order_id>', methods=['POST'])
 def complete_order(order_id):
     key = request.args.get('key')
