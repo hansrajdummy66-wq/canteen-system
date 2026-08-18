@@ -5,89 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>School Canteen Menu</title>
     <style>
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            max-width: 900px; 
-            margin: 0 auto; 
-            padding: 20px; 
-            background-color: #f4f7f6; 
-            color: #333;
-        }
+        /* (Keep your existing CSS here) */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; background-color: #f4f7f6; color: #333; }
         h1 { text-align: center; color: #2c3e50; font-size: 2.5em; margin-bottom: 30px; }
-        .student-details { 
-            background: white; 
-            padding: 25px; 
-            border-radius: 10px; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
-            margin-bottom: 30px;
-        }
+        .student-details { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 30px; }
         .student-details h3 { margin-top: 0; color: #2c3e50; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;}
         .form-group { margin-bottom: 15px; }
         label { font-weight: bold; display: block; margin-bottom: 5px; color: #495057; }
-        input[type="text"], input[type="number"], select { 
-            width: 100%; 
-            padding: 10px; 
-            border: 1px solid #ced4da; 
-            border-radius: 5px; 
-            box-sizing: border-box; 
-            font-size: 16px;
-        }
-        .menu-container { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
-            gap: 20px; 
-        }
-        .menu-item { 
-            background: #fff; 
-            padding: 15px; 
-            border-radius: 10px; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
-            text-align: center; 
-            transition: transform 0.2s;
-        }
+        input[type="text"], input[type="number"], select { width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 5px; box-sizing: border-box; font-size: 16px; }
+        .menu-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+        .menu-item { background: #fff; padding: 15px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: center; transition: transform 0.2s; }
         .menu-item:hover { transform: translateY(-5px); box-shadow: 0 6px 12px rgba(0,0,0,0.1); }
-        .menu-item img { 
-            width: 100%; 
-            height: 180px; 
-            object-fit: cover; 
-            border-radius: 8px; 
-            margin-bottom: 15px; 
-        }
+        .menu-item img { width: 100%; height: 180px; object-fit: cover; border-radius: 8px; margin-bottom: 15px; }
         .menu-item h4 { margin: 5px 0; font-size: 18px; color: #343a40; }
         .price { color: #28a745; font-weight: bold; font-size: 1.2em; margin-bottom: 15px; }
-        .order-controls { 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            gap: 10px; 
-            background: #f8f9fa;
-            padding: 10px;
-            border-radius: 5px;
-        }
+        .order-controls { display: flex; justify-content: center; align-items: center; gap: 10px; background: #f8f9fa; padding: 10px; border-radius: 5px; }
         .order-controls input[type="checkbox"] { transform: scale(1.5); cursor: pointer; }
         .order-controls input[type="number"] { width: 70px; padding: 5px; text-align: center; }
-        .submit-btn { 
-            width: 100%; 
-            padding: 15px; 
-            background-color: #ff6b6b; 
-            color: white; 
-            border: none; 
-            border-radius: 8px; 
-            font-size: 20px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            margin-top: 30px; 
-            transition: background-color 0.3s;
-        }
+        .submit-btn { width: 100%; padding: 15px; background-color: #ff6b6b; color: white; border: none; border-radius: 8px; font-size: 20px; font-weight: bold; cursor: pointer; margin-top: 30px; transition: background-color 0.3s; }
         .submit-btn:hover { background-color: #fa5252; }
+        .closed-msg { text-align: center; background: #ff4757; color: white; padding: 40px; border-radius: 10px; font-size: 1.5em; font-weight: bold; margin-top: 50px; }
     </style>
 </head>
 <body>
 
     <h1>🏫 Canteen Ordering System</h1>
     
+    {% if is_open %}
     <form method="POST">
-        <!-- Student Information Section -->
         <div class="student-details">
             <h3>Student Details</h3>
             
@@ -105,8 +50,6 @@
                 <label>Class & Section/Stream:</label>
                 <select name="class_section" required>
                     <option value="" disabled selected>Select your class...</option>
-                    
-                    <!-- Classes 5 to 10 -->
                     <optgroup label="Middle & High School">
                         {% for c in range(5, 11) %}
                             {% for sec in ['A', 'B', 'C', 'D'] %}
@@ -114,8 +57,6 @@
                             {% endfor %}
                         {% endfor %}
                     </optgroup>
-                    
-                    <!-- Classes 11 and 12 -->
                     <optgroup label="Senior Secondary (Streams)">
                         {% for c in [11, 12] %}
                             {% for stream in ['NonMed', 'Med', 'Commerce', 'Humanities'] %}
@@ -125,9 +66,13 @@
                     </optgroup>
                 </select>
             </div>
+            
+            <div class="form-group" style="background: #e3f2fd; padding: 15px; border-radius: 5px; border-left: 5px solid #007bff; margin-top: 15px;">
+                <label style="color: #0056b3; margin:0;">Payment Method:</label>
+                <p style="margin: 5px 0 0 0; font-weight: bold;">💵 Cash (Pay exactly at the collection counter)</p>
+            </div>
         </div>
 
-        <!-- Menu Section -->
         <h3 style="text-align: center; font-size: 2em; color: #2c3e50;">Our Menu</h3>
         <div class="menu-container">
             {% for item in menu %}
@@ -148,6 +93,12 @@
 
         <button type="submit" class="submit-btn">Place Order 🍽️</button>
     </form>
+    {% else %}
+    <div class="closed-msg">
+        ⛔ Canteen Ordering is now CLOSED.<br><br>
+        <span style="font-size: 0.7em; font-weight: normal;">Orders must be placed before 7:45 AM. See you tomorrow!</span>
+    </div>
+    {% endif %}
 
 </body>
 </html>
