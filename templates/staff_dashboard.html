@@ -1,51 +1,141 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Kitchen Dashboard</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Dashboard - Canteen Orders</title>
     <style>
-        .staff-table { width: 100%; border-collapse: collapse; background: white; margin-top: 20px; border-radius: 10px; overflow: hidden; }
-        .staff-table th { background: #333; color: white; padding: 15px; text-align: left; }
-        .staff-table td { padding: 15px; border-bottom: 1px solid #eee; }
-        .order-id { background: #ffeaa7; padding: 4px 8px; border-radius: 4px; font-weight: bold; color: #d63031; }
-        .total-price { font-weight: bold; color: #2ecc71; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+        .refresh-btn {
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        .refresh-btn:hover {
+            background-color: #218838;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+        th {
+            background-color: #e9ecef;
+            font-weight: bold;
+            color: #495057;
+            text-transform: uppercase;
+            font-size: 0.9em;
+        }
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        .ref-badge {
+            background: #ff6b6b;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        .roll-no {
+            font-size: 1.2em;
+            font-weight: 900;
+            color: #007bff;
+        }
+        .price {
+            font-weight: bold;
+            color: #28a745;
+            font-size: 1.1em;
+        }
+        .items-list {
+            line-height: 1.5;
+        }
+        .no-orders {
+            text-align: center;
+            padding: 50px;
+            font-size: 1.2em;
+            color: #6c757d;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header style="text-align: center; margin-bottom: 30px;">
-            <h1>👨‍🍳 Kitchen Dashboard</h1>
-            <p>Live Pre-Orders</p>
-        </header>
 
-        <table class="staff-table">
-            <thead>
-                <tr>
-                    <th>Time</th>
-                    <th>Order ID</th>
-                    <th>Student</th>
-                    <th>Class</th>
-                    <th>Items</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for order in orders %}
-                <tr>
-                    <td>{{ order.created_at.strftime('%I:%M %p') }}</td>
-                    <td><span class="order-id">{{ order.order_ref }}</span></td>
-                    <td>{{ order.student_name }}</td>
-                    <td>{{ order.student_class }}</td>
-                    <td>{{ order.items }}</td>
-                    <td class="total-price">₹{{ order.total_price }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        
-        <div style="text-align: center; margin-top: 30px;">
-            <a href="/" style="text-decoration: none; color: #666;">← Back to Student Menu</a>
-        </div>
+    <div class="header">
+        <h1>👨‍🍳 Canteen Staff Dashboard</h1>
+        <button onclick="location.reload();" class="refresh-btn">↻ Refresh Orders</button>
     </div>
+
+    {% if orders %}
+    <table>
+        <thead>
+            <tr>
+                <th>Order Ref</th>
+                <th>Time</th>
+                <th>Student Name</th>
+                <th>Roll No</th>
+                <th>Class / Stream</th>
+                <th>Items Ordered (Qty)</th>
+                <th>Total Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td><span class="ref-badge">{{ order.order_ref }}</span></td>
+                <td>{{ order.created_at.strftime('%d %b, %I:%M %p') }}</td>
+                <td><strong>{{ order.student_name }}</strong></td>
+                <td class="roll-no">{{ order.roll_number }}</td>
+                <td>{{ order.student_class }}</td>
+                <td class="items-list">{{ order.items }}</td>
+                <td class="price">₹{{ order.total_price }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="no-orders">
+        <p>🍽️ No orders have been placed yet today. Waiting for students to order...</p>
+    </div>
+    {% endif %}
+
 </body>
 </html>
