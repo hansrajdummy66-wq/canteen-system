@@ -1,7 +1,7 @@
 import os
 import random
 import string
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 
@@ -14,6 +14,9 @@ app.config['SECRET_KEY'] = 'canteen-secret-key'
 STAFF_API_KEY = os.environ.get('STAFF_KEY', 'canteen123')
 
 db = SQLAlchemy(app)
+
+# Indian Standard Time (IST) setup
+IST = timezone(timedelta(hours=5, minutes=30))
 
 # Menu Data
 MENU = [
@@ -35,23 +38,40 @@ MENU = [
     {"id": "16", "name": "Iced Tea", "price": 30, "image": "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=500"}
 ]
 
-# Database Model
+# Database Model (Updated with PIN, Status, and Payment)
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     order_ref = db.Column(db.String(10), unique=True)
+    collection_pin = db.Column(db.String(4))
     student_name = db.Column(db.String(100))
     roll_number = db.Column(db.String(20))
     student_class = db.Column(db.String(50))
     items = db.Column(db.String(500))
     total_price = db.Column(db.Integer)
+    payment_method = db.Column(db.String(20), default="Cash")
+    is_completed = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 with app.app_context():
     db.create_all()
 
+# Time Checker Function
+def is_ordering_open():
+    now_ist = datetime.now(IST)
+    if now_ist.hour < 7:
+        return True
+    elif now_ist.hour == 7 and now_ist.minute < 45:
+        return True
+    return False
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    is_open = is_ordering_open()
+    
     if request.method == 'POST':
+        if not is_open:
+            return "Ordering is closed. Cutoff time is 7:45 AM.", 403
+            
         name = request.form.get('student_name')
         roll_no = request.form.get('roll_number')
         cls_sec = request.form.get('class_section')
@@ -66,13 +86,20 @@ def index():
                 total += (item['price'] * qty)
                 order_list.append(f"{qty}x {item['name']}")
         
+        # Generate Reference and 4-Digit Secret PIN
         ref = f"#{''.join(random.choices(string.ascii_uppercase + string.digits, k=5))}"
+        pin = f"{random.randint(1000, 9999)}"
         
-        new_order = Order(order_ref=ref, student_name=name, roll_number=roll_no, student_class=cls_sec, items=", ".join(order_list), total_price=total)
+        new_order = Order(
+            order_ref=ref, collection_pin=pin, student_name=name, roll_number=roll_no, 
+            student_class=cls_sec, items=", ".join(order_list), total_price=total,
+            payment_method="Cash"
+        )
         db.session.add(new_order)
         db.session.commit()
         return redirect(url_for('success', order_ref=ref))
-    return render_template('index.html', menu=MENU)
+        
+    return render_template('index.html', menu=MENU, is_open=is_open)
 
 @app.route('/success/<order_ref>')
 def success(order_ref):
@@ -84,8 +111,25 @@ def staff_dashboard():
     key = request.args.get('key')
     if key != STAFF_API_KEY:
         return "Unauthorized", 401
+    
     orders = Order.query.order_by(Order.created_at.desc()).all()
-    return render_template('staff_dashboard.html', orders=orders)
+    total_orders = len(orders)
+    pending_orders = sum(1 for o in orders if not o.is_completed)
+    
+    return render_template('staff_dashboard.html', orders=orders, total=total_orders, pending=pending_orders)
+
+# NEW: Route to mark an order as completed
+@app.route('/complete/<int:order_id>', methods=['POST'])
+def complete_order(order_id):
+    key = request.args.get('key')
+    if key != STAFF_API_KEY:
+        return "Unauthorized", 401
+        
+    order = Order.query.get_or_404(order_id)
+    order.is_completed = True
+    db.session.commit()
+    
+    return redirect(url_for('staff_dashboard', key=key))
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
