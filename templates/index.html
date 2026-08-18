@@ -1,40 +1,153 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Canteen Pre-Order</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Canteen Menu</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            max-width: 900px; 
+            margin: 0 auto; 
+            padding: 20px; 
+            background-color: #f4f7f6; 
+            color: #333;
+        }
+        h1 { text-align: center; color: #2c3e50; font-size: 2.5em; margin-bottom: 30px; }
+        .student-details { 
+            background: white; 
+            padding: 25px; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+            margin-bottom: 30px;
+        }
+        .student-details h3 { margin-top: 0; color: #2c3e50; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;}
+        .form-group { margin-bottom: 15px; }
+        label { font-weight: bold; display: block; margin-bottom: 5px; color: #495057; }
+        input[type="text"], input[type="number"], select { 
+            width: 100%; 
+            padding: 10px; 
+            border: 1px solid #ced4da; 
+            border-radius: 5px; 
+            box-sizing: border-box; 
+            font-size: 16px;
+        }
+        .menu-container { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
+            gap: 20px; 
+        }
+        .menu-item { 
+            background: #fff; 
+            padding: 15px; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+            text-align: center; 
+            transition: transform 0.2s;
+        }
+        .menu-item:hover { transform: translateY(-5px); box-shadow: 0 6px 12px rgba(0,0,0,0.1); }
+        .menu-item img { 
+            width: 100%; 
+            height: 180px; 
+            object-fit: cover; 
+            border-radius: 8px; 
+            margin-bottom: 15px; 
+        }
+        .menu-item h4 { margin: 5px 0; font-size: 18px; color: #343a40; }
+        .price { color: #28a745; font-weight: bold; font-size: 1.2em; margin-bottom: 15px; }
+        .order-controls { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 10px; 
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .order-controls input[type="checkbox"] { transform: scale(1.5); cursor: pointer; }
+        .order-controls input[type="number"] { width: 70px; padding: 5px; text-align: center; }
+        .submit-btn { 
+            width: 100%; 
+            padding: 15px; 
+            background-color: #ff6b6b; 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            font-size: 20px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            margin-top: 30px; 
+            transition: background-color 0.3s;
+        }
+        .submit-btn:hover { background-color: #fa5252; }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🏫 School Canteen</h1>
-        <form method="POST">
-            <div class="form-inputs">
-                <input type="text" name="student_name" placeholder="Your Name" required>
-                <select name="class_section" required>
-                    <option value="">Select Class</option>
-                    <option value="10-A">10-A</option>
-                    <option value="10-B">10-B</option>
-                    <option value="11-A">11-A</option>
-                    <option value="11-B">11-B</option>
-                </select>
+
+    <h1>🏫 Canteen Ordering System</h1>
+    
+    <form method="POST">
+        <!-- Student Information Section -->
+        <div class="student-details">
+            <h3>Student Details</h3>
+            
+            <div class="form-group">
+                <label>Student Name:</label>
+                <input type="text" name="student_name" placeholder="Enter your full name" required>
             </div>
 
-            <div class="menu-grid">
-                {% for item in menu %}
-                <label>
-                    <input type="checkbox" name="items" value="{{ item.id }}" class="hidden-check">
-                    <div class="food-card">
-                        <img src="{{ item.image }}">
-                        <div class="info">
-                            <h3>{{ item.name }}</h3>
-                            <p class="price">₹{{ item.price }}</p>
-                        </div>
-                    </div>
-                </label>
-                {% endfor %}
+            <div class="form-group">
+                <label>Roll Number:</label>
+                <input type="number" name="roll_number" placeholder="Enter your roll number" required min="1">
             </div>
-            <button type="submit" class="btn">Place Order</button>
-        </form>
-    </div>
+
+            <div class="form-group">
+                <label>Class & Section/Stream:</label>
+                <select name="class_section" required>
+                    <option value="" disabled selected>Select your class...</option>
+                    
+                    <!-- Classes 5 to 10 -->
+                    <optgroup label="Middle & High School">
+                        {% for c in range(5, 11) %}
+                            {% for sec in ['A', 'B', 'C', 'D'] %}
+                                <option value="{{c}}-{{sec}}">Class {{c}} - Section {{sec}}</option>
+                            {% endfor %}
+                        {% endfor %}
+                    </optgroup>
+                    
+                    <!-- Classes 11 and 12 -->
+                    <optgroup label="Senior Secondary (Streams)">
+                        {% for c in [11, 12] %}
+                            {% for stream in ['NonMed', 'Med', 'Commerce', 'Humanities'] %}
+                                <option value="{{c}}-{{stream}}">Class {{c}} - {{stream}}</option>
+                            {% endfor %}
+                        {% endfor %}
+                    </optgroup>
+                </select>
+            </div>
+        </div>
+
+        <!-- Menu Section -->
+        <h3 style="text-align: center; font-size: 2em; color: #2c3e50;">Our Menu</h3>
+        <div class="menu-container">
+            {% for item in menu %}
+            <div class="menu-item">
+                <img src="{{item.image}}" alt="{{item.name}}">
+                <h4>{{item.name}}</h4>
+                <div class="price">₹{{item.price}}</div>
+                <div class="order-controls">
+                    <input type="checkbox" name="items" id="item_{{item.id}}" value="{{item.id}}">
+                    <label for="item_{{item.id}}" style="margin:0; font-weight: normal; cursor: pointer;">Add</label>
+                    <span style="color: #ccc;">|</span>
+                    <label style="margin:0; font-weight: normal;">Qty:</label>
+                    <input type="number" name="qty_{{item.id}}" value="1" min="1">
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <button type="submit" class="submit-btn">Place Order 🍽️</button>
+    </form>
+
 </body>
 </html>
