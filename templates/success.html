@@ -1,40 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Successful</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background-color: #f4f7f6; padding: 50px 20px; }
-        .receipt-card { background: white; max-width: 500px; margin: 0 auto; padding: 40px; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); border-top: 10px solid #28a745; }
-        h1 { color: #28a745; margin-bottom: 5px; }
-        .order-ref { font-size: 2.5em; font-weight: bold; color: #343a40; margin: 20px 0; background: #e9ecef; padding: 10px; border-radius: 8px; letter-spacing: 2px;}
-        .pin-box { background: #fff3cd; color: #856404; padding: 20px; border-radius: 10px; border: 2px dashed #ffe8a1; margin: 25px 0; }
-        .pin-number { font-size: 3em; font-weight: 900; letter-spacing: 5px; margin: 10px 0 0 0; }
-        .details { text-align: left; background: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 20px; }
-        .home-btn { display: inline-block; margin-top: 30px; padding: 12px 25px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; }
+        body { font-family: sans-serif; text-align: center; background: #f4f7f6; padding: 50px; }
+        .card { background: white; max-width: 500px; margin: auto; padding: 30px; border-radius: 10px; border-top: 10px solid #28a745; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .pin { background: #fff3cd; color: #856404; padding: 20px; font-size: 2em; font-weight: bold; border-radius: 10px; margin: 20px 0; border: 2px dashed #ffe8a1; }
     </style>
 </head>
 <body>
-    <div class="receipt-card">
-        <h1>✅ Order Confirmed!</h1>
-        <p>Your order has been successfully placed.</p>
-        
-        <div class="order-ref">{{ order.order_ref }}</div>
-
-        <div class="pin-box">
-            <div style="font-weight: bold; text-transform: uppercase;">Secret Collection PIN</div>
-            <div class="pin-number">{{ order.collection_pin }}</div>
-            <p style="font-size: 0.9em; margin-bottom: 0;">Show this PIN and pay <strong>₹{{ order.total_price }} (Cash)</strong> at the counter.</p>
+    <div class="card">
+        <h1 style="color:#28a745;">✅ Order Confirmed</h1>
+        <h2>Order Ref: {{ order.order_ref }}</h2>
+        <div class="pin">
+            <small style="font-size:12px; display:block;">SECRET PIN</small>
+            {{ order.collection_pin }}
         </div>
-
-        <div class="details">
-            <strong>Name:</strong> {{ order.student_name }}<br>
-            <strong>Class:</strong> {{ order.student_class }} | <strong>Roll No:</strong> {{ order.roll_number }}<br>
-            <strong>Items:</strong> {{ order.items }}
-        </div>
-
-        <a href="/" class="home-btn">Return to Menu</a>
+        <p>Please pay <strong>₹{{ order.total_price }}</strong> at the counter.</p>
+        <div style="background:#f8f9fa; padding:15px; text-align:left; border-radius:5px;">
+            <strong>{{ order.student_name }}</strong> (Roll: {{ order.roll_number }}, {{ order.student_class }})<br>
+            Items: {{ order.items }}
+        </div><br>
+        <a href="/" style="padding:10px 20px; background:#007bff; color:white; text-decoration:none; border-radius:5px;">Back to Menu</a>
     </div>
 </body>
 </html>
