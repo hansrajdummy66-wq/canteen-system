@@ -1,19 +1,21 @@
-import os, random, string
-from datetime import datetime, timezone, timedelta
+import os
+import random
+import string
+from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
-
+# Configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///orders.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'canteen-secret-key'
 STAFF_API_KEY = os.environ.get('STAFF_KEY', 'canteen123')
+
 db = SQLAlchemy(app)
-IST = timezone(timedelta(hours=5, minutes=30))
 
-
+# Menu Data
 MENU = [
     {"id": "1", "name": "Veg Noodles", "price": 50, "image": "https://images.unsplash.com/photo-1585032226651-759b368d7246?w=500"},
     {"id": "2", "name": "Veg Fried Rice", "price": 50, "image": "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=500"},
@@ -33,7 +35,7 @@ MENU = [
     {"id": "16", "name": "Iced Tea", "price": 30, "image": "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=500"}
 ]
 
-
+# Database Model
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     order_ref = db.Column(db.String(10), unique=True)
@@ -50,23 +52,13 @@ class Order(db.Model):
 with app.app_context():
     db.create_all()
 
-
-def is_ordering_open():
-    return True 
-   
-
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        if not is_ordering_open():
-            return "Ordering is closed. Cutoff is 7:45 AM.", 403
-            
-        
         name = request.form.get('student_name')
         roll_no = request.form.get('roll_number')
         cls_sec = request.form.get('class_section')
         selected_ids = request.form.getlist('items')
-        
         
         total = 0
         order_list = []
@@ -77,13 +69,11 @@ def index():
                 if item['id'] == item_id:
                     total = total + (item['price'] * qty)
                     order_list.append(f"{qty}x {item['name']}")
-                    break 
-        
+                    break
         
         ref = "#" + "".join(random.choices(string.ascii_uppercase + string.digits, k=5))
         pin = str(random.randint(1000, 9999))
         
-     
         new_order = Order(
             order_ref=ref, collection_pin=pin, student_name=name, roll_number=roll_no, 
             student_class=cls_sec, items=", ".join(order_list), total_price=total
@@ -93,7 +83,7 @@ def index():
         
         return redirect(url_for('success', order_ref=ref))
         
-    return render_template('index.html', menu=MENU, is_open=is_ordering_open())
+    return render_template('index.html', menu=MENU, is_open=True)
 
 @app.route('/success/<order_ref>')
 def success(order_ref):
@@ -102,30 +92,32 @@ def success(order_ref):
 
 @app.route('/staff')
 def staff_dashboard():
-    if request.args.get('key') != STAFF_API_KEY:
+    key = request.args.get('key')
+    if key != STAFF_API_KEY:
         return "Unauthorized", 401
     
     orders = Order.query.order_by(Order.created_at.desc()).all()
     total_orders = len(orders)
     
-  
     pending = 0
     for o in orders:
-        if o.is_completed == False:
+        if not o.is_completed:
             pending += 1
             
     return render_template('staff_dashboard.html', orders=orders, total=total_orders, pending=pending)
 
 @app.route('/complete/<int:order_id>', methods=['POST'])
 def complete_order(order_id):
-    if request.args.get('key') != STAFF_API_KEY:
+    key = request.args.get('key')
+    if key != STAFF_API_KEY:
         return "Unauthorized", 401
         
     order = Order.query.get_or_404(order_id)
     order.is_completed = True
     db.session.commit()
     
-    return redirect(url_for('staff_dashboard', key=request.args.get('key')))
+    return redirect(url_for('staff_dashboard', key=key))
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
